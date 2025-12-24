@@ -2,8 +2,6 @@
 
 import { useState, useEffect, createContext, useContext } from 'react';
 import {
-  Github,
-  Linkedin,
   Mail,
   ExternalLink,
   Menu,
@@ -11,10 +9,11 @@ import {
   Sun,
   Moon,
   ArrowRight,
-  Code,
   MapPin,
   FileInput
 } from 'lucide-react';
+
+import { LuGithub, LuLinkedin } from "react-icons/lu";
 
 // --- Types & Interfaces ---
 
@@ -267,8 +266,8 @@ const Hero = () => {
           </div>
 
           <div className="flex items-center md:justify-start justify-center gap-6 text-(--text-secondary)">
-            <a href="https://github.com/naylinmyat" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><Github size={24} /></a>
-            <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><Linkedin size={24} /></a>
+            <a href="https://github.com/naylinmyat" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><LuGithub size={24} /></a>
+            <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><LuLinkedin size={24} /></a>
             <a href="mailto:naylinmyat04@gmail.com" className="hover:text-(--accent) transition-colors transform hover:scale-110"><Mail size={24} /></a>
           </div>
         </div>
@@ -453,7 +452,7 @@ const Contact = () => {
 
             <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="flex flex-col items-center group">
               <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
-                <Linkedin size={28} />
+                <LuLinkedin size={28} />
               </div>
               <span className="text-(--text-primary) font-bold text-lg">LinkedIn</span>
               <span className="text-(--text-secondary)">Connect</span>
