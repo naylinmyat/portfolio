@@ -10,10 +10,26 @@ import {
   Moon,
   ArrowRight,
   MapPin,
-  FileInput
+  FileInput,
+  Phone,
+  Award,
+  BookOpen,
+  Cpu
 } from 'lucide-react';
 
-import { LuGithub, LuLinkedin } from "react-icons/lu";
+import {
+  SiReact,
+  SiTailwindcss,
+  SiNextdotjs,
+  SiTypescript,
+  SiJavascript,
+  SiMysql
+} from "react-icons/si";
+
+import {
+  LuGithub,
+  LuLinkedin
+} from "react-icons/lu";
 
 // --- Types & Interfaces ---
 
@@ -31,6 +47,16 @@ interface Experience {
   role: string;
   period: string;
   description: string;
+}
+
+interface Certification {
+  name: string,
+  fullName: string,
+  issuer: string,
+  icon: any,
+  color: string,
+  bg: string,
+  border: string
 }
 
 interface Skill {
@@ -132,7 +158,9 @@ const SKILLS: SkillCategory[] = [
     category: "Backend",
     items: [
       { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" },
-      { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" }
+      { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" },
+      { name: "Supabase", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg" },
+      { name: "WebSocket", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/socketio/socketio-original.svg" }
     ]
   },
   {
@@ -142,6 +170,27 @@ const SKILLS: SkillCategory[] = [
       { name: "Flutter", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg" }
     ]
   },
+];
+
+const CERTIFICATIONS: Certification[] = [
+  {
+    name: "JLPT N4",
+    fullName: "Japanese Language Proficiency Test",
+    issuer: "The Japan Foundation",
+    icon: BookOpen,
+    color: "text-red-500",
+    bg: "bg-red-500/10",
+    border: "group-hover:border-red-500"
+  },
+  {
+    name: "ITPEC FE",
+    fullName: "Fundamental Information Technology Engineer",
+    issuer: "ITPEC (Information Technology Professionals Examination Council)",
+    icon: Cpu,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    border: "group-hover:border-blue-500"
+  }
 ];
 
 // --- Components ---
@@ -276,19 +325,75 @@ const Hero = () => {
         <div className="order-1 md:order-2 flex justify-center md:justify-end relative">
           <div className="relative w-72 h-72 md:w-125 md:h-125">
             {/* Decorative Circle Behind */}
-            <div className="absolute inset-4 rounded-full border-2 border-dashed border-(--border-color) animate-[spin_20s_linear_infinite]"></div>
+            <div className="absolute -inset-8 md:-inset-12 rounded-full animate-[spin_20s_linear_infinite]">
+
+              {/* 1. React (Top Center) */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                <SiReact
+                  size={24}
+                  className="text-[#61DAFB]"
+                  style={{ animation: 'spin 20s linear infinite reverse' }}
+                />
+              </div>
+
+              {/* 2. Tailwind (Top Right) */}
+              <div className="absolute top-[25%] right-[6.7%] translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                <SiTailwindcss
+                  size={24}
+                  className="text-[#06B6D4]"
+                  style={{ animation: 'spin 20s linear infinite reverse' }}
+                />
+              </div>
+
+              {/* 3. Next.js (Bottom Right) */}
+              <div className="absolute bottom-[25%] right-[6.7%] translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                <SiNextdotjs
+                  size={24}
+                  className="text-(--text-primary)"
+                  style={{ animation: 'spin 20s linear infinite reverse' }}
+                />
+              </div>
+
+              {/* 4. TypeScript (Bottom Center) */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                <SiTypescript
+                  size={24}
+                  className="text-[#3178C6]"
+                  style={{ animation: 'spin 20s linear infinite reverse' }}
+                />
+              </div>
+
+              {/* 5. JavaScript (Bottom Left) */}
+              <div className="absolute bottom-[25%] left-[6.7%] -translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                <SiJavascript
+                  size={24}
+                  className="text-[#F7DF1E]"
+                  style={{ animation: 'spin 20s linear infinite reverse' }}
+                />
+              </div>
+
+              {/* 6. MySQL (Top Left) */}
+              <div className="absolute top-[25%] left-[6.7%] -translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                <SiMysql
+                  size={24}
+                  className="text-[#4479A1]"
+                  style={{ animation: 'spin 20s linear infinite reverse' }}
+                />
+              </div>
+
+            </div>
 
             {/* Main Avatar Container */}
-            <div className="absolute inset-0 rounded-full overflow-hidden border-8 border-(--bg-surface) shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
+            <div className="absolute inset-0 rounded-full overflow-hidden border-8 border-(--bg-surface) shadow-2xl transition-transform duration-500 hover:scale-[1.03]">
               <img
-                src="/my-avatar.png"
+                src="/my-avatar-2.png"
                 alt="Nay Lin Myat"
                 className="w-full h-full object-cover"
               />
             </div>
 
             {/* Floating Badge */}
-            <div className="absolute bottom-10 -left-4 md:bottom-20 md:-left-10 bg-(--bg-main) border border-(--border-color) p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce delay-700">
+            <div className="absolute bottom-10 -left-4 md:bottom-20 md:-left-10 bg-transparent border border-(--border-color) p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce delay-700">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <span className="font-bold text-(--text-primary) text-sm">Open To Work</span>
             </div>
@@ -324,6 +429,34 @@ const Experience = () => {
               <p className="text-(--text-secondary) leading-relaxed">
                 {exp.description}
               </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Certifications = () => {
+  return (
+    <section className="py-12 bg-(--bg-surface) border-t border-(--border-color)">
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="flex items-center gap-3 mb-8">
+          <Award className="text-(--accent)" size={24} />
+          <h2 className="text-2xl font-bold text-(--text-primary)">Certifications</h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {CERTIFICATIONS.map((cert, index) => (
+            <div key={index} className={`group bg-(--bg-main) p-6 rounded-2xl border border-(--border-color) transition-all duration-300 ${cert.border} hover:shadow-lg flex items-start gap-4`}>
+              <div className={`p-3 rounded-xl ${cert.bg} ${cert.color}`}>
+                <cert.icon size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-(--text-primary)">{cert.name}</h3>
+                <p className="text-sm font-medium text-(--text-primary) opacity-90">{cert.fullName}</p>
+                <p className="text-xs text-(--text-secondary) mt-1">{cert.issuer}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -432,31 +565,48 @@ const Projects = () => {
 const Contact = () => {
   return (
     <section id="contact" className="py-24 bg-(--bg-main)">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+      <div className="max-w-5xl mx-auto px-6 text-center">
         <h2 className="text-4xl md:text-6xl font-bold text-(--text-primary) mb-8">Let's build something amazing.</h2>
         <p className="text-xl text-(--text-secondary) mb-12 max-w-2xl mx-auto">
           Currently based in Tokyo, Japan and open for opportunities.
         </p>
 
         <div className="bg-(--bg-surface) p-8 md:p-12 rounded-3xl border border-(--border-color)">
-          <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
-            <a href="mailto:naylinmyat04@gmail.com" className="flex flex-col items-center group">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12">
+
+            {/* 1. Email */}
+            <a href="mailto:naylinmyat04@gmail.com" className="flex flex-col items-center group min-w-40">
               <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
                 <Mail size={28} />
               </div>
               <span className="text-(--text-primary) font-bold text-lg">Email Me</span>
-              <span className="text-(--text-secondary)">naylinmyat04@gmail.com</span>
+              <span className="text-(--text-secondary) text-sm mt-1">naylinmyat04@gmail.com</span>
             </a>
 
+            {/* Divider 1 */}
             <div className="hidden md:block w-px h-24 bg-(--border-color)"></div>
 
-            <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="flex flex-col items-center group">
+            {/* 2. Phone (New) */}
+            <a href="tel:+817090541490" className="flex flex-col items-center group min-w-40">
+              <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
+                <Phone size={28} />
+              </div>
+              <span className="text-(--text-primary) font-bold text-lg">Call Me</span>
+              <span className="text-(--text-secondary) text-sm mt-1">+81 70-9054-1490</span>
+            </a>
+
+            {/* Divider 2 */}
+            <div className="hidden md:block w-px h-24 bg-(--border-color)"></div>
+
+            {/* 3. LinkedIn */}
+            <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="flex flex-col items-center group min-w-40">
               <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
                 <LuLinkedin size={28} />
               </div>
               <span className="text-(--text-primary) font-bold text-lg">LinkedIn</span>
-              <span className="text-(--text-secondary)">Connect</span>
+              <span className="text-(--text-secondary) text-sm mt-1">Connect Profile</span>
             </a>
+
           </div>
         </div>
 
@@ -493,11 +643,12 @@ const App = () => {
         }
       `}</style>
 
-      <div className="min-h-screen bg-(--bg-main) text-(--text-primary) font-sans selection:bg-(--accent) selection:text-white transition-colors duration-300">
+      <div className="min-h-screen bg-(--bg-main) text-(--text-primary) font-sans selection:bg-(--accent) selection:text-white transition-colors duration-300 overflow-hidden">
         <Navbar />
         <main>
           <Hero />
           <Experience />
+          <Certifications />
           <Skills />
           <Projects />
           <Contact />
