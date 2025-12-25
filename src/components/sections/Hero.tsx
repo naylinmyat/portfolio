@@ -11,14 +11,6 @@ import Image from 'next/image';
 export const Hero = () => {
     const { language, t } = useLanguage();
 
-    const getAvatarImage = () => {
-        switch (language) {
-            case 'ja': return "/my-avatar-2.png";
-            case 'my': return "/my-avatar-3.png";
-            default: return "/my-avatar-1.png";
-        }
-    };
-
     return (
         <section className="relative min-h-screen flex items-center px-6 pt-20 pb-10 bg-(--bg-main) overflow-hidden">
             <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
@@ -96,16 +88,30 @@ export const Hero = () => {
                                     <SiMysql size={30} className="text-[#4479A1]" style={{ animation: 'spin 20s linear infinite reverse' }} />
                                 </div>
                             </div>
-
-                            <div className="absolute inset-0 rounded-full overflow-hidden border-8 border-(--bg-surface) shadow-2xl transition-transform duration-500 hover:scale-[1.03] z-10">
+                            
+                            <div className="absolute inset-0 rounded-full overflow-hidden border-8 border-(--bg-surface) shadow-2xl transition-transform duration-500 hover:scale-[1.03] z-10 bg-(--bg-surface)">
+                                
                                 <Image 
-                                    key={language}
-                                    src={getAvatarImage()}
-                                    alt="Nay Lin Myat" 
+                                    src="/my-avatar-1.png" 
+                                    alt="Nay Lin Myat (EN)" 
                                     fill
-                                    className="object-cover animate-fade-in transition-opacity duration-500"
-                                    priority
+                                    className={`absolute inset-0 object-cover transition-opacity duration-700 ease-in-out ${language === 'en' ? 'opacity-100 z-10' : 'opacity-0 z-0'}`} 
                                 />
+
+                                <Image 
+                                    src="/my-avatar-2.png" 
+                                    alt="Nay Lin Myat (JA)" 
+                                    fill
+                                    className={`absolute inset-0 object-cover transition-opacity duration-700 ease-in-out ${language === 'ja' ? 'opacity-100 z-10' : 'opacity-0 z-0'}`} 
+                                />
+
+                                <Image 
+                                    src="/my-avatar-3.png" 
+                                    alt="Nay Lin Myat (MY)" 
+                                    fill
+                                    className={`absolute inset-0 object-cover transition-opacity duration-700 ease-in-out ${language === 'my' ? 'opacity-100 z-10' : 'opacity-0 z-0'}`} 
+                                />
+                                
                             </div>
 
                             <div className="absolute bottom-10 -left-4 lg:bottom-20 lg:-left-10 bg-transparent border border-(--border-color) md:p-4 p-2.5 rounded-xl shadow-xl flex items-center gap-3 animate-bounce delay-700 z-20">
