@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Nay Lin Myat's Portfolio",
-  description: "Frontend Developer - Nay Lin Myat's personal portfolio website.",
+  title: "Nay Lin Myat | Frontend Developer",
+  description: "Portfolio of a Mid Level Frontend Developer based in Tokyo (Japan).",
 };
 
 export default function RootLayout({
@@ -24,10 +18,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={inter.className}>
+        <ThemeProvider>
+          <LanguageProvider>
+            <div className="min-h-screen bg-(--bg-main) text-(--text-primary) font-sans selection:bg-(--accent) selection:text-white transition-colors duration-300 overflow-hidden relative">
+              {children}
+            </div>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
