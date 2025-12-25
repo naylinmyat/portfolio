@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, useRef } from 'react';
 import {
   Mail,
   ExternalLink,
@@ -77,11 +77,76 @@ interface ThemeContextType {
 // --- Context ---
 
 const ThemeContext = createContext<ThemeContextType>({
-  isDark: false, // Default context value matched to initial state
+  isDark: false,
   toggleTheme: () => { },
 });
 
 const useTheme = () => useContext(ThemeContext);
+
+// --- ANIMATION COMPONENT ---
+// This handles the "Slide In" effect when you scroll down
+interface RevealProps {
+  children: React.ReactNode;
+  direction?: 'up' | 'down' | 'left' | 'right';
+  delay?: number; // in seconds
+  className?: string;
+}
+
+const Reveal = ({ children, direction = 'up', delay = 0, className = "" }: RevealProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target); // Only animate once
+        }
+      },
+      {
+        threshold: 0.15, // Trigger when 15% of the element is visible
+        rootMargin: "0px 0px -50px 0px"
+      }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) observer.disconnect();
+    };
+  }, []);
+
+  // Calculate transform based on direction
+  const getTransform = () => {
+    if (!isVisible) {
+      switch (direction) {
+        case 'up': return 'translateY(50px)';
+        case 'down': return 'translateY(-50px)';
+        case 'left': return 'translateX(50px)';
+        case 'right': return 'translateX(-50px)';
+        default: return 'translateY(50px)';
+      }
+    }
+    return 'translate(0)';
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`${className}`}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: getTransform(),
+        transition: `all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1) ${delay}s`
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 // --- Data ---
 
@@ -160,7 +225,7 @@ const SKILLS: SkillCategory[] = [
       { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" },
       { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" },
       { name: "Supabase", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg" },
-      { name: "WebSocket", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/socketio/socketio-original.svg" }
+      { name: "WebSocket", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/socketio/socketio-original.svg" },
     ]
   },
   {
@@ -287,117 +352,83 @@ const Navbar = () => {
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center px-6 pt-20 pb-10 bg-(--bg-main)">
+    <section className="relative min-h-screen flex items-center px-6 pt-20 pb-10 bg-(--bg-main) overflow-hidden">
       <div className="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
 
-        {/* Left Side: Text */}
         <div className="order-2 md:order-1 text-center md:text-left">
-          <div className="inline-block px-4 py-2 mb-6 border border-(--accent) text-(--accent) font-bold uppercase tracking-widest text-xs rounded-full animate-fade-in">
-            Available for Hire
-          </div>
+          <Reveal direction='right' delay={0.2}>
+            <div className="inline-block px-4 py-2 mb-6 border border-(--accent) text-(--accent) font-bold uppercase tracking-widest text-xs rounded-full">
+              Available for Hire
+            </div>
+          </Reveal>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-(--text-primary) mb-6 tracking-tight leading-none">
-            NAY LIN <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-(--text-secondary) to-(--text-primary)">MYAT</span>
-          </h1>
+          <Reveal direction='right' delay={0.3}>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-(--text-primary) mb-6 tracking-tight leading-none">
+              NAY LIN <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-(--text-secondary) to-(--text-primary)">MYAT</span>
+            </h1>
+          </Reveal>
 
-          <p className="text-xl md:text-2xl text-(--text-secondary) max-w-lg mx-auto md:mx-0 mb-10 font-light leading-relaxed">
-            Building robust <span className="text-(--accent) font-medium">Next.js</span> applications and scalable mobile solutions with modern aesthetics.
-          </p>
+          <Reveal direction='right' delay={0.4}>
+            <p className="text-xl md:text-2xl text-(--text-secondary) max-w-lg mx-auto md:mx-0 mb-10 font-light leading-relaxed">
+              Building robust <span className="text-(--accent) font-medium">Next.js</span> applications and scalable mobile solutions with modern aesthetics.
+            </p>
+          </Reveal>
 
-          <div className="flex flex-col sm:flex-row items-center md:justify-start justify-center gap-4 mb-12">
-            <a href="#contact" className="px-8 py-4 bg-(--text-primary) text-(--bg-main) font-bold rounded-full hover:opacity-90 transition-all flex items-center gap-2">
-              Work With Me <ArrowRight size={20} />
-            </a>
-            <a href="https://registry.jsonresume.org/naylinmyat?theme=stackoverflow" target='_blank' className="px-8 py-4 border border-(--border-color) text-(--text-primary) font-bold rounded-full hover:bg-(--bg-surface) transition-all flex items-center gap-2">
-              <FileInput size={20} /> View CV
-            </a>
-          </div>
+          <Reveal direction='up' delay={0.5}>
+            <div className="flex flex-col sm:flex-row items-center md:justify-start justify-center gap-4 mb-12">
+              <a href="#contact" className="px-8 py-4 bg-(--text-primary) text-(--bg-main) font-bold rounded-full hover:opacity-90 transition-all flex items-center gap-2">
+                Work With Me <ArrowRight size={20} />
+              </a>
+              <a href="https://registry.jsonresume.org/naylinmyat?theme=stackoverflow" target='_blank' className="px-8 py-4 border border-(--border-color) text-(--text-primary) font-bold rounded-full hover:bg-(--bg-surface) transition-all flex items-center gap-2">
+                <FileInput size={20} /> View CV
+              </a>
+            </div>
+          </Reveal>
 
-          <div className="flex items-center md:justify-start justify-center gap-6 text-(--text-secondary)">
-            <a href="https://github.com/naylinmyat" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><LuGithub size={24} /></a>
-            <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><LuLinkedin size={24} /></a>
-            <a href="mailto:naylinmyat04@gmail.com" className="hover:text-(--accent) transition-colors transform hover:scale-110"><Mail size={24} /></a>
-          </div>
+          <Reveal direction='up' delay={0.6}>
+            <div className="flex items-center md:justify-start justify-center gap-6 text-(--text-secondary)">
+              <a href="https://github.com/naylinmyat" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><LuGithub size={24} /></a>
+              <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="hover:text-(--accent) transition-colors transform hover:scale-110"><LuLinkedin size={24} /></a>
+              <a href="mailto:naylinmyat04@gmail.com" className="hover:text-(--accent) transition-colors transform hover:scale-110"><Mail size={24} /></a>
+            </div>
+          </Reveal>
         </div>
 
-        {/* Right Side: Avatar */}
         <div className="order-1 md:order-2 flex justify-center md:justify-end relative">
-          <div className="relative w-72 h-72 md:w-125 md:h-125">
-            {/* Decorative Circle Behind */}
-            <div className="absolute -inset-8 md:-inset-12 rounded-full animate-[spin_20s_linear_infinite]">
-
-              {/* 1. React (Top Center) */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
-                <SiReact
-                  size={24}
-                  className="text-[#61DAFB]"
-                  style={{ animation: 'spin 20s linear infinite reverse' }}
-                />
+          <Reveal direction='left' delay={0.3}>
+            <div className="relative w-72 h-72 md:w-125 md:h-125">
+              <div className="absolute -inset-8 md:-inset-12 rounded-full animate-[spin_20s_linear_infinite]">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                  <SiReact size={30} className="text-[#61DAFB]" style={{ animation: 'spin 20s linear infinite reverse' }} />
+                </div>
+                <div className="absolute top-[25%] right-[6.7%] translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                  <SiTailwindcss size={30} className="text-[#06B6D4]" style={{ animation: 'spin 20s linear infinite reverse' }} />
+                </div>
+                <div className="absolute bottom-[25%] right-[6.7%] translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                  <SiNextdotjs size={30} className="text-(--text-primary)" style={{ animation: 'spin 20s linear infinite reverse' }} />
+                </div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                  <SiTypescript size={30} className="text-[#3178C6]" style={{ animation: 'spin 20s linear infinite reverse' }} />
+                </div>
+                <div className="absolute bottom-[25%] left-[6.7%] -translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                  <SiJavascript size={30} className="text-[#F7DF1E]" style={{ animation: 'spin 20s linear infinite reverse' }} />
+                </div>
+                <div className="absolute top-[25%] left-[6.7%] -translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
+                  <SiMysql size={30} className="text-[#4479A1]" style={{ animation: 'spin 20s linear infinite reverse' }} />
+                </div>
               </div>
 
-              {/* 2. Tailwind (Top Right) */}
-              <div className="absolute top-[25%] right-[6.7%] translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
-                <SiTailwindcss
-                  size={24}
-                  className="text-[#06B6D4]"
-                  style={{ animation: 'spin 20s linear infinite reverse' }}
-                />
+              <div className="absolute inset-0 rounded-full overflow-hidden border-8 border-(--bg-surface) shadow-2xl transition-transform duration-500 hover:scale-[1.03] z-10">
+                <img src="/my-avatar-2.png" alt="Nay Lin Myat" className="w-full h-full object-cover" />
               </div>
 
-              {/* 3. Next.js (Bottom Right) */}
-              <div className="absolute bottom-[25%] right-[6.7%] translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
-                <SiNextdotjs
-                  size={24}
-                  className="text-(--text-primary)"
-                  style={{ animation: 'spin 20s linear infinite reverse' }}
-                />
+              <div className="absolute bottom-10 -left-4 md:bottom-20 md:-left-10 bg-transparent border border-(--border-color) p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce delay-700 z-20">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="font-bold text-(--text-primary) text-sm">Open To Work</span>
               </div>
-
-              {/* 4. TypeScript (Bottom Center) */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
-                <SiTypescript
-                  size={24}
-                  className="text-[#3178C6]"
-                  style={{ animation: 'spin 20s linear infinite reverse' }}
-                />
-              </div>
-
-              {/* 5. JavaScript (Bottom Left) */}
-              <div className="absolute bottom-[25%] left-[6.7%] -translate-x-1/2 translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
-                <SiJavascript
-                  size={24}
-                  className="text-[#F7DF1E]"
-                  style={{ animation: 'spin 20s linear infinite reverse' }}
-                />
-              </div>
-
-              {/* 6. MySQL (Top Left) */}
-              <div className="absolute top-[25%] left-[6.7%] -translate-x-1/2 -translate-y-1/2 bg-(--bg-surface) p-3 rounded-full border border-(--border-color) shadow-sm">
-                <SiMysql
-                  size={24}
-                  className="text-[#4479A1]"
-                  style={{ animation: 'spin 20s linear infinite reverse' }}
-                />
-              </div>
-
             </div>
-
-            {/* Main Avatar Container */}
-            <div className="absolute inset-0 rounded-full overflow-hidden border-8 border-(--bg-surface) shadow-2xl transition-transform duration-500 hover:scale-[1.03]">
-              <img
-                src="/my-avatar-2.png"
-                alt="Nay Lin Myat"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Floating Badge */}
-            <div className="absolute bottom-10 -left-4 md:bottom-20 md:-left-10 bg-transparent border border-(--border-color) p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce delay-700">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="font-bold text-(--text-primary) text-sm">Open To Work</span>
-            </div>
-          </div>
+          </Reveal>
         </div>
 
       </div>
@@ -409,27 +440,31 @@ const Experience = () => {
   return (
     <section id="experience" className="py-24 bg-(--bg-surface)">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <span className="text-(--accent) font-bold tracking-widest uppercase text-sm">Career Path</span>
-          <h2 className="text-3xl md:text-4xl font-bold text-(--text-primary) mt-2">Professional Experience</h2>
-        </div>
+        <Reveal direction='up'>
+          <div className="text-center mb-16">
+            <span className="text-(--accent) font-bold tracking-widest uppercase text-sm">Career Path</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-(--text-primary) mt-2">Professional Experience</h2>
+          </div>
+        </Reveal>
 
         <div className="space-y-8">
           {EXPERIENCES.map((exp, index) => (
-            <div key={index} className="bg-(--bg-main) p-8 rounded-2xl border border-(--border-color) hover:border-(--accent) transition-colors shadow-sm group">
-              <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-(--text-primary) group-hover:text-(--accent) transition-colors">{exp.role}</h3>
-                  <div className="text-(--text-secondary) font-medium">{exp.company}</div>
+            <Reveal key={index} direction='up' delay={index * 0.1}>
+              <div className="bg-(--bg-main) p-8 rounded-2xl border border-(--border-color) hover:border-(--accent) transition-colors shadow-sm group">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-(--text-primary) group-hover:text-(--accent) transition-colors">{exp.role}</h3>
+                    <div className="text-(--text-secondary) font-medium">{exp.company}</div>
+                  </div>
+                  <span className="mt-2 md:mt-0 px-3 py-1 bg-(--bg-surface) text-(--text-primary) text-sm font-medium rounded-full inline-block w-fit border border-(--border-color)">
+                    {exp.period}
+                  </span>
                 </div>
-                <span className="mt-2 md:mt-0 px-3 py-1 bg-(--bg-surface) text-(--text-primary) text-sm font-medium rounded-full inline-block w-fit border border-(--border-color)">
-                  {exp.period}
-                </span>
+                <p className="text-(--text-secondary) leading-relaxed">
+                  {exp.description}
+                </p>
               </div>
-              <p className="text-(--text-secondary) leading-relaxed">
-                {exp.description}
-              </p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -441,23 +476,27 @@ const Certifications = () => {
   return (
     <section className="py-12 bg-(--bg-surface) border-t border-(--border-color)">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="flex items-center gap-3 mb-8">
-          <Award className="text-(--accent)" size={24} />
-          <h2 className="text-2xl font-bold text-(--text-primary)">Certifications</h2>
-        </div>
+        <Reveal direction='right'>
+          <div className="flex items-center gap-3 mb-8">
+            <Award className="text-(--accent)" size={24} />
+            <h2 className="text-2xl font-bold text-(--text-primary)">Certifications</h2>
+          </div>
+        </Reveal>
 
         <div className="grid md:grid-cols-2 gap-6">
           {CERTIFICATIONS.map((cert, index) => (
-            <div key={index} className={`group bg-(--bg-main) p-6 rounded-2xl border border-(--border-color) transition-all duration-300 ${cert.border} hover:shadow-lg flex items-start gap-4`}>
-              <div className={`p-3 rounded-xl ${cert.bg} ${cert.color}`}>
-                <cert.icon size={24} />
+            <Reveal key={index} direction='up' delay={index * 0.1}>
+              <div className={`group bg-(--bg-main) h-full p-6 rounded-2xl border border-(--border-color) transition-all duration-300 ${cert.border} hover:shadow-lg flex items-start gap-4`}>
+                <div className={`p-3 rounded-xl ${cert.bg} ${cert.color}`}>
+                  <cert.icon size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-(--text-primary)">{cert.name}</h3>
+                  <p className="text-sm font-medium text-(--text-primary) opacity-90">{cert.fullName}</p>
+                  <p className="text-xs text-(--text-secondary) mt-1">{cert.issuer}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-(--text-primary)">{cert.name}</h3>
-                <p className="text-sm font-medium text-(--text-primary) opacity-90">{cert.fullName}</p>
-                <p className="text-xs text-(--text-secondary) mt-1">{cert.issuer}</p>
-              </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -469,35 +508,39 @@ const Skills = () => {
   return (
     <section id="skills" className="py-24 bg-(--bg-main)">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <span className="text-(--accent) font-bold tracking-widest uppercase text-sm">Tech Stack</span>
-          <h2 className="text-3xl md:text-4xl font-bold text-(--text-primary) mt-2">Tools & Technologies</h2>
-        </div>
+        <Reveal direction='up'>
+          <div className="text-center mb-16">
+            <span className="text-(--accent) font-bold tracking-widest uppercase text-sm">Tech Stack</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-(--text-primary) mt-2">Tools & Technologies</h2>
+          </div>
+        </Reveal>
 
         <div className="grid md:grid-cols-3 gap-12">
           {SKILLS.map((category, idx) => (
-            <div key={idx} className="bg-(--bg-surface) p-8 rounded-3xl border border-(--border-color)">
-              <h3 className="text-xl font-bold text-(--text-primary) mb-8 text-center uppercase tracking-wide border-b border-(--border-color) pb-4">
-                {category.category}
-              </h3>
+            <Reveal key={idx} direction='up' delay={idx * 0.1}>
+              <div className="bg-(--bg-surface) h-full p-8 rounded-3xl border border-(--border-color)">
+                <h3 className="text-xl font-bold text-(--text-primary) mb-8 text-center uppercase tracking-wide border-b border-(--border-color) pb-4">
+                  {category.category}
+                </h3>
 
-              <div className="grid grid-cols-3 gap-6">
-                {category.items.map((skill, i) => (
-                  <div key={i} className="flex flex-col items-center group cursor-pointer">
-                    <div className="w-16 h-16 bg-(--bg-main) rounded-2xl flex items-center justify-center mb-3 shadow-sm border border-(--border-color) transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-lg group-hover:border-(--accent)">
-                      <img
-                        src={skill.icon}
-                        alt={skill.name}
-                        className="w-8 h-8 transition-transform duration-300 group-hover:scale-110"
-                      />
+                <div className="grid grid-cols-3 gap-6">
+                  {category.items.map((skill, i) => (
+                    <div key={i} className="flex flex-col items-center group cursor-pointer">
+                      <div className="w-16 h-16 bg-(--bg-main) rounded-2xl flex items-center justify-center mb-3 shadow-sm border border-(--border-color) transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-lg group-hover:border-(--accent)">
+                        <img
+                          src={skill.icon}
+                          alt={skill.name}
+                          className={`w-8 h-8 transition-transform duration-300 group-hover:scale-110 ${skill.name === 'Payload CMS' || skill.name === 'Next.js' ? 'dark:invert' : ''}`}
+                        />
+                      </div>
+                      <span className="text-sm font-medium text-(--text-secondary) group-hover:text-(--text-primary) transition-colors text-center">
+                        {skill.name}
+                      </span>
                     </div>
-                    <span className="text-sm font-medium text-(--text-secondary) group-hover:text-(--text-primary) transition-colors">
-                      {skill.name}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -509,46 +552,50 @@ const Projects = () => {
   return (
     <section id="projects" className="py-24 bg-(--bg-surface)">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-(--border-color) pb-8">
-          <div>
-            <span className="text-(--accent) font-bold tracking-widest uppercase text-sm">Portfolio</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-(--text-primary) mt-2">Selected Works</h2>
+        <Reveal direction='up'>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-(--border-color) pb-8">
+            <div>
+              <span className="text-(--accent) font-bold tracking-widest uppercase text-sm">Portfolio</span>
+              <h2 className="text-3xl md:text-5xl font-bold text-(--text-primary) mt-2">Selected Works</h2>
+            </div>
+            <a href="https://github.com/naylinmyat" target='_blank' className="hidden md:flex items-center gap-2 text-(--text-primary) font-bold hover:text-(--accent) transition-colors">
+              View GitHub <ExternalLink size={20} />
+            </a>
           </div>
-          <a href="https://github.com/naylinmyat" target='_blank' className="hidden md:flex items-center gap-2 text-(--text-primary) font-bold hover:text-(--accent) transition-colors">
-            View GitHub <ExternalLink size={20} />
-          </a>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {PROJECTS.map((project, idx) => (
-            <div key={idx} className="group flex flex-col h-full">
-              <div className="bg-(--bg-main) border border-(--border-color) p-8 rounded-3xl h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                <div className="flex justify-between items-center mb-8">
-                  <a href={project.link} target='_blank' className="flex items-center gap-2 text-(--text-primary) font-bold hover:text-(--accent) transition-colors">
-                    <div className="p-3 bg-(--bg-surface) rounded-xl text-(--text-primary) border border-(--border-color)">
-                      <ExternalLink size={24} />
-                    </div>
-                    View
-                  </a>
-                  <span className="text-sm font-bold text-(--text-secondary) uppercase tracking-wider">{project.year}</span>
-                </div>
+            <Reveal key={idx} direction='up' delay={idx * 0.1}>
+              <div className="group flex flex-col h-full">
+                <div className="bg-(--bg-main) border border-(--border-color) p-8 rounded-3xl h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="flex justify-between items-center mb-8">
+                    <a href={project.link} target='_blank' className="flex items-center gap-2 text-(--text-primary) font-bold hover:text-(--accent) transition-colors">
+                      <div className="p-3 bg-(--bg-surface) rounded-xl text-(--text-primary) border border-(--border-color)">
+                        <ExternalLink size={24} />
+                      </div>
+                      View
+                    </a>
+                    <span className="text-sm font-bold text-(--text-secondary) uppercase tracking-wider">{project.year}</span>
+                  </div>
 
-                <h3 className="text-2xl font-bold text-(--text-primary) mb-3 group-hover:text-(--accent) transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-(--text-secondary) mb-8 grow leading-relaxed">
-                  {project.description}
-                </p>
+                  <h3 className="text-2xl font-bold text-(--text-primary) mb-3 group-hover:text-(--accent) transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-(--text-secondary) mb-8 grow leading-relaxed">
+                    {project.description}
+                  </p>
 
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.tags.map((tag, tIdx) => (
-                    <span key={tIdx} className="px-4 py-2 bg-(--bg-surface) text-(--text-primary) rounded-lg text-sm font-medium border border-(--border-color)">
-                      {tag}
-                    </span>
-                  ))}
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {project.tags.map((tag, tIdx) => (
+                      <span key={tIdx} className="px-4 py-2 bg-(--bg-surface) text-(--text-primary) rounded-lg text-sm font-medium border border-(--border-color)">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
 
@@ -566,53 +613,48 @@ const Contact = () => {
   return (
     <section id="contact" className="py-24 bg-(--bg-main)">
       <div className="max-w-5xl mx-auto px-6 text-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-(--text-primary) mb-8">Let's build something amazing.</h2>
-        <p className="text-xl text-(--text-secondary) mb-12 max-w-2xl mx-auto">
-          Currently based in Tokyo, Japan and open for opportunities.
-        </p>
+        <Reveal direction='up'>
+          <h2 className="text-4xl md:text-6xl font-bold text-(--text-primary) mb-8">Let's build something amazing.</h2>
+          <p className="text-xl text-(--text-secondary) mb-12 max-w-2xl mx-auto">
+            Currently based in Tokyo, Japan and open for opportunities.
+          </p>
+        </Reveal>
 
-        <div className="bg-(--bg-surface) p-8 md:p-12 rounded-3xl border border-(--border-color)">
-          <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12">
-
-            {/* 1. Email */}
-            <a href="mailto:naylinmyat04@gmail.com" className="flex flex-col items-center group min-w-40">
-              <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
-                <Mail size={28} />
-              </div>
-              <span className="text-(--text-primary) font-bold text-lg">Email Me</span>
-              <span className="text-(--text-secondary) text-sm mt-1">naylinmyat04@gmail.com</span>
-            </a>
-
-            {/* Divider 1 */}
-            <div className="hidden md:block w-px h-24 bg-(--border-color)"></div>
-
-            {/* 2. Phone (New) */}
-            <a href="tel:+817090541490" className="flex flex-col items-center group min-w-40">
-              <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
-                <Phone size={28} />
-              </div>
-              <span className="text-(--text-primary) font-bold text-lg">Call Me</span>
-              <span className="text-(--text-secondary) text-sm mt-1">+81 70-9054-1490</span>
-            </a>
-
-            {/* Divider 2 */}
-            <div className="hidden md:block w-px h-24 bg-(--border-color)"></div>
-
-            {/* 3. LinkedIn */}
-            <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="flex flex-col items-center group min-w-40">
-              <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
-                <LuLinkedin size={28} />
-              </div>
-              <span className="text-(--text-primary) font-bold text-lg">LinkedIn</span>
-              <span className="text-(--text-secondary) text-sm mt-1">Connect Profile</span>
-            </a>
-
+        <Reveal direction='up' delay={0.2}>
+          <div className="bg-(--bg-surface) p-8 md:p-12 rounded-3xl border border-(--border-color)">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12">
+              <a href="mailto:naylinmyat04@gmail.com" className="flex flex-col items-center group min-w-40">
+                <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
+                  <Mail size={28} />
+                </div>
+                <span className="text-(--text-primary) font-bold text-lg">Email Me</span>
+                <span className="text-(--text-secondary) text-sm mt-1">naylinmyat04@gmail.com</span>
+              </a>
+              <div className="hidden md:block w-px h-24 bg-(--border-color)"></div>
+              <a href="tel:+817090541490" className="flex flex-col items-center group min-w-40">
+                <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
+                  <Phone size={28} />
+                </div>
+                <span className="text-(--text-primary) font-bold text-lg">Call Me</span>
+                <span className="text-(--text-secondary) text-sm mt-1">+81 70-9054-1490</span>
+              </a>
+              <div className="hidden md:block w-px h-24 bg-(--border-color)"></div>
+              <a href="https://www.linkedin.com/in/nay-lin-myat-b60127224/" target='_blank' className="flex flex-col items-center group min-w-40">
+                <div className="w-16 h-16 bg-(--bg-main) rounded-full flex items-center justify-center text-(--text-primary) mb-4 border border-(--border-color) group-hover:border-(--accent) transition-colors group-hover:scale-110">
+                  <LuLinkedin size={28} />
+                </div>
+                <span className="text-(--text-primary) font-bold text-lg">LinkedIn</span>
+                <span className="text-(--text-secondary) text-sm mt-1">Connect Profile</span>
+              </a>
+            </div>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="mt-16 text-(--text-secondary) flex items-center justify-center gap-2">
-          <MapPin size={18} /> Tokyo, Japan
-        </div>
+        <Reveal direction='up' delay={0.4}>
+          <div className="mt-16 text-(--text-secondary) flex items-center justify-center gap-2">
+            <MapPin size={18} /> Tokyo, Japan
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -621,9 +663,7 @@ const Contact = () => {
 // --- Main App Component ---
 
 const App = () => {
-  // FIXED: Explicitly set initial state to false (Light Mode)
   const [isDark, setIsDark] = useState(false);
-
   const toggleTheme = () => setIsDark(!isDark);
 
   return (
@@ -643,7 +683,7 @@ const App = () => {
         }
       `}</style>
 
-      <div className="min-h-screen bg-(--bg-main) text-(--text-primary) font-sans selection:bg-(--accent) selection:text-white transition-colors duration-300 overflow-hidden">
+      <div className="min-h-screen bg-(--bg-main) text-(--text-primary) font-sans selection:bg-(--accent) selection:text-white transition-colors duration-300 overflow-hidden relative">
         <Navbar />
         <main>
           <Hero />
