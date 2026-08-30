@@ -29,12 +29,12 @@ export const Projects = () => {
               <div className="group flex flex-col h-full">
                 <div className="bg-(--bg-main) border border-(--border-color) p-8 rounded-3xl h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                   <div className="flex justify-between items-center mb-8">
-                    <a href={project.link} target='_blank' className="flex items-center gap-2 text-(--text-primary) font-bold hover:text-(--accent) transition-colors">
+                    {/* <a href={project.link} target='_blank' className="flex items-center gap-2 text-(--text-primary) font-bold hover:text-(--accent) transition-colors">
                       <div className="p-3 bg-(--bg-surface) rounded-xl text-(--text-primary) border border-(--border-color)">
                         <ExternalLink size={24} />
                       </div>
                       View
-                    </a>
+                    </a> */}
                     <span className="text-sm font-bold text-(--text-secondary) uppercase tracking-wider">{project.year}</span>
                   </div>
 

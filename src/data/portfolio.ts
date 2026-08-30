@@ -171,8 +171,8 @@ export const getCertifications = (lang: Language): Certification[] => {
   if (lang === 'ja') {
     return [
       {
-        name: "JLPT N4",
-        fullName: "日本語能力試験 N4",
+        name: "JLPT N3",
+        fullName: "日本語能力試験 N3",
         issuer: "国際交流基金",
         icon: BookOpen,
         color: "text-red-500",
