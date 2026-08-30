@@ -193,7 +193,7 @@ export const getCertifications = (lang: Language): Certification[] => {
 
   return [
     {
-      name: "JLPT N4",
+      name: "JLPT N3",
       fullName: "Japanese Language Proficiency Test",
       issuer: "The Japan Foundation",
       icon: BookOpen,
