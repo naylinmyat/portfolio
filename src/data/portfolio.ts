@@ -8,7 +8,7 @@ export const getExperiences = (lang: Language): Experience[] => {
       {
         company: "Laconic (タイ企業)",
         role: "中級フロントエンド開発者",
-        period: "2024 - 現在",
+        period: "2024 - 2025",
         description: "Next.js、TypeScript、ReactNativeを使用してコア製品を再構築。ページの読み込み時間を40%短縮しました。",
       },
       {
@@ -31,7 +31,7 @@ export const getExperiences = (lang: Language): Experience[] => {
       {
         company: "Laconic (ထိုင်းကုမ္ပဏီ)",
         role: "Mid Level Frontend Developer",
-        period: "2024 - လက်ရှိ",
+        period: "2024 - 2025",
         description: "Next.js, TypeScript နှင့် ReactNative တို့ကိုအသုံးပြု၍ ကုမ္ပဏီ၏အဓိကထုတ်ကုန်များကို ပြန်လည်တည်ဆောက်ခဲ့သည်။ ဝဘ်ဆိုက်အမြန်နှုန်းကို ၄၀% တိုးတက်စေခဲ့သည်။",
       },
       {
@@ -53,7 +53,7 @@ export const getExperiences = (lang: Language): Experience[] => {
     {
       company: "Laconic (Thai Company)",
       role: "Mid Level Frontend Developer",
-      period: "2024 - Present",
+      period: "2024 - 2025",
       description: "Rebuilding the core products using Next.js, TypeScript and ReactNative. Improved load times by 40%.",
     },
     {
